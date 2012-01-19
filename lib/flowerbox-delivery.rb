@@ -1,0 +1,2 @@
+require "flowerbox/delivery"
+
