@@ -38,7 +38,7 @@ module Flowerbox
       def port
         return @port if @port ||= options[:port]
 
-        attempts = 100
+        attempts = 20
 
         begin
           attempts -= 1

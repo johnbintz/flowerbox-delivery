@@ -1,11 +1,14 @@
 require 'flowerbox-delivery'
 
 require 'mocha'
+require 'fakefs/safe'
 
 World(Mocha::API)
 
 Before do
   mocha_setup
+
+  FakeFS.activate!
 end
 
 After do
@@ -14,6 +17,8 @@ After do
   ensure
     mocha_teardown
   end
+
+  FakeFS.deactivate!
 
   if @running_server
     @running_server[:server].shutdown

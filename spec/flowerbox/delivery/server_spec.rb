@@ -41,31 +41,59 @@ describe Flowerbox::Delivery::Server do
 
   describe '#port' do
     let(:interface) { '127.0.0.1' }
+    let(:base) { 25000 }
+    let(:initial) { base + @offset }
 
     before do
       server.stubs(:interface).returns(interface)
+
+      @offset = 0
+      ok = true
+
+      begin
+        [ 0, 1 ].each do |index|
+          begin
+            TCPSocket.new(interface, base + @offset + index)
+            @offset += 1
+            ok = false
+          rescue Errno::ECONNREFUSED => e
+          end
+        end
+      end while !ok
     end
 
     subject { server.port }
 
     context 'no running service' do
       before do
-        Kernel.stubs(:rand).returns(0)
+        Kernel.stubs(:rand).returns(@offset)
       end
 
-      it { should == 25000 }
+      it { should == initial }
     end
 
     context 'running service' do
       before do
         @server = Thread.new do
-          TCPServer.new(interface, 25000)
+          TCPServer.new(interface, initial)
         end
 
-        server.stubs(:random_port).returns(25000, 25001)
+        server.stubs(:random_port).returns(initial, initial + 1)
+
+        while true
+          begin
+            TCPSocket.new(interface, initial)
+            break
+          rescue Errno::ECONNREFUSED
+          end
+        end
       end
 
-      it { should == 25001 }
+      it { should == initial + 1 }
+
+      after do
+        @server.kill
+      end
     end
   end
 end
