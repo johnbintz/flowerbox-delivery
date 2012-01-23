@@ -7,11 +7,11 @@ module Flowerbox::Delivery
     def initialize(options)
       @options = options
 
-      @files = []
+      @files = UniqueAssetList.new
     end
 
     def add(asset)
-      @files += paths_for(asset)
+      @files.add(paths_for(asset))
     end
 
     def paths_for(asset)
