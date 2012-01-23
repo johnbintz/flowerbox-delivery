@@ -5,6 +5,12 @@ require 'fakefs/safe'
 
 World(Mocha::API)
 
+class FakeFS::File::Stat
+  def file?
+    File.file?(@file)
+  end
+end
+
 Before do
   mocha_setup
 
