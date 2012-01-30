@@ -1,7 +1,7 @@
 module Flowerbox::Delivery
   class UniqueAssetList < ::Array
     def add(files)
-      files.each { |file| self << file if !include?(file) }
+      [ files ].flatten.each { |file| self << file if !include?(file) }
     end
 
     private

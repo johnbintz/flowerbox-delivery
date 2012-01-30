@@ -11,10 +11,14 @@ class FakeFS::File::Stat
   end
 end
 
+class FakeFS::File
+  def self.executable?(file)
+    false
+  end
+end
+
 Before do
   mocha_setup
-
-  FakeFS.activate!
 end
 
 After do
@@ -24,8 +28,6 @@ After do
     mocha_teardown
   end
 
-  FakeFS.deactivate!
-
   if @running_server
     @running_server[:server].shutdown
     @running_server = nil
@@ -34,4 +36,25 @@ After do
   end
 
   @server.stop if @server
+end
+
+def temp_path_for(file)
+  File.join('.tmp/sprockets', File.expand_path(file.gsub(%r{\.js.*$}, '.js')))
+end
+
+Before('@fakefs') do
+  FakeFS.activate!
+end
+
+After('@fakefs') do
+  FakeFS::FileSystem.clear
+  FakeFS.deactivate!
+end
+
+Before('@realfs') do
+  FileUtils.rm_rf 'dir'
+end
+
+After('@realfs') do
+  FileUtils.rm_rf 'dir'
 end

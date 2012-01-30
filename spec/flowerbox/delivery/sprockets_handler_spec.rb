@@ -7,16 +7,20 @@ describe Flowerbox::Delivery::SprocketsHandler do
 
   describe '#add' do
     let(:asset) { 'asset' }
-    let(:paths) { [ 'paths' ] }
+    let(:path) { 'path' }
+    let(:paths) { [ path ] }
+
+    let(:pathname_path) { 'pathname path' }
 
     before do
       sprockets_handler.expects(:paths_for).with(asset).returns(paths)
+      sprockets_handler.expects(:path_for_compiled_asset).with(path).returns(pathname_path)
     end
 
     it 'should add the asset to the list of ones to work with' do
       sprockets_handler.add(asset)
 
-      sprockets_handler.files.should == paths
+      sprockets_handler.files.should == [ pathname_path ]
     end
   end
 

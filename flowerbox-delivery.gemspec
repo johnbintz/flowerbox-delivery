@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'mocha'
   gem.add_development_dependency 'fakefs'
   gem.add_development_dependency 'nokogiri'
+  gem.add_development_dependency 'therubyracer'
 
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'sprockets'

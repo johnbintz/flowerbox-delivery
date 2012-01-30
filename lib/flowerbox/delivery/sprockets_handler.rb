@@ -11,7 +11,7 @@ module Flowerbox::Delivery
     end
 
     def add(asset)
-      @files.add(paths_for(asset))
+      paths_for(asset).each { |path| @files.add(path_for_compiled_asset(path)) }
     end
 
     def paths_for(asset)
@@ -22,8 +22,19 @@ module Flowerbox::Delivery
       return @environment if @environment
 
       @environment = Sprockets::Environment.new
+      @environment.unregister_postprocessor('application/javascript', Sprockets::SafetyColons)
+      @environment.register_engine('.js', Flowerbox::Delivery::Tilt::JSTemplate)
+
       options[:asset_paths].each { |path| @environment.append_path(path) }
       @environment
+    end
+
+    def asset_for(*args)
+      environment.find_asset(*args)
+    end
+
+    def path_for_compiled_asset(path)
+      Pathname(asset_for(path, :bundle => false).to_s)
     end
   end
 end

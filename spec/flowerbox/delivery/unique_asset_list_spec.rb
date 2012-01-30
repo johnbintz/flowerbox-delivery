@@ -9,7 +9,8 @@ describe Flowerbox::Delivery::UniqueAssetList do
     let(:third) { Pathname.new('two') }
 
     it 'should not add assets already added' do
-      unique_asset_list.add([ first, second, third ])
+      unique_asset_list.add(first)
+      unique_asset_list.add([ second, third ])
 
       unique_asset_list.should == [ first, third ]
     end
