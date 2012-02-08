@@ -1,9 +1,9 @@
 require 'tilt'
 
-class Flowerbox::Delivery::Tilt::JSTemplate < Tilt::Template
-  self.default_mime_type = "application/javascript"
+class Flowerbox::Delivery::Tilt::CSSTemplate < Tilt::Template
+  self.default_mime_type = "text/css"
 
-  EXTENSION = "js"
+  EXTENSION = "css"
 
   include Flowerbox::Delivery::Tilt::TemplateThatSaves
 

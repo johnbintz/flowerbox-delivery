@@ -1,4 +1,5 @@
 require 'sprockets'
+require 'sprockets/engines'
 
 module Flowerbox::Delivery
   class SprocketsHandler
@@ -23,7 +24,11 @@ module Flowerbox::Delivery
 
       @environment = Sprockets::Environment.new
       @environment.unregister_postprocessor('application/javascript', Sprockets::SafetyColons)
+      @environment.unregister_bundle_processor('text/css', Sprockets::CharsetNormalizer)
       @environment.register_engine('.js', Flowerbox::Delivery::Tilt::JSTemplate)
+      @environment.register_engine('.css', Flowerbox::Delivery::Tilt::CSSTemplate)
+      @environment.register_engine('.jst', Flowerbox::Delivery::Tilt::JSTTemplate)
+
 
       options[:asset_paths].each { |path| @environment.append_path(path) }
       @environment
