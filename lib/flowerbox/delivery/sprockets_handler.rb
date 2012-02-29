@@ -1,9 +1,14 @@
 require 'sprockets'
 require 'sprockets/engines'
+require 'forwardable'
 
 module Flowerbox::Delivery
   class SprocketsHandler
+    extend Forwardable
+
     attr_reader :files, :options
+
+    def_delegators :environment, :append_path
 
     def initialize(options)
       @options = options
@@ -29,8 +34,8 @@ module Flowerbox::Delivery
       @environment.register_engine('.css', Flowerbox::Delivery::Tilt::CSSTemplate)
       @environment.register_engine('.jst', Flowerbox::Delivery::Tilt::JSTTemplate)
 
+      options[:asset_paths].each { |path| append_path(path) }
 
-      options[:asset_paths].each { |path| @environment.append_path(path) }
       @environment
     end
 
@@ -43,3 +48,4 @@ module Flowerbox::Delivery
     end
   end
 end
+

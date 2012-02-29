@@ -13,14 +13,20 @@ module Flowerbox
 
       def start
         @server_thread = Thread.new do
-          Rack::Handler::WEBrick.run(lambda { |env| [ 200, {}, [] ] }, :Port => port, :Host => interface) { |server|
+          ::Rack::Handler::WEBrick.run(options[:app], :Port => port, :Host => interface) do |server|
+            trap('QUIT') { server.stop }
+
             Thread.current[:server] = server
-          }
+          end
         end
 
-        while !@server_thread[:server]
+        while !@server_thread[:server] && @server_thread.alive?
+          $stderr.puts "waiting"
+
           sleep 0.1
         end
+
+        raise StandardError.new("Server died") if !@server_thread.alive?
       end
 
       def stop
