@@ -8,12 +8,18 @@ module Flowerbox
       attr_reader :options
 
       def initialize(options = {})
-        @options = options || {}
+        @options = { :logging => false }.merge(options || {})
       end
 
       def start
         @server_thread = Thread.new do
-          ::Rack::Handler::WEBrick.run(options[:app], :Port => port, :Host => interface) do |server|
+          server_options = { :Port => port, :Host => interface }
+          if !options[:logging]
+            server_options[:AccessLog] = [ nil, nil ]
+            server_options[:Logger] = Logger.new('/dev/null')
+          end
+
+          ::Rack::Handler::WEBrick.run(options[:app], server_options) do |server|
             trap('QUIT') { server.stop }
 
             Thread.current[:server] = server
@@ -21,8 +27,6 @@ module Flowerbox
         end
 
         while !@server_thread[:server] && @server_thread.alive?
-          $stderr.puts "waiting"
-
           sleep 0.1
         end
 
