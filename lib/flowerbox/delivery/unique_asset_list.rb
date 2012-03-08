@@ -4,6 +4,10 @@ module Flowerbox::Delivery
       [ files ].flatten.each { |file| self << file if !include?(file) }
     end
 
+    def to_json
+      collect(&:body)
+    end
+
     private
     def include?(file)
       any? { |other_file| other_file == file }

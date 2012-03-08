@@ -18,7 +18,15 @@ module Flowerbox::Delivery::Tilt::TemplateThatSaves
   end
 
   def temp_file
-    File.join(Dir.pwd, ".tmp/sprockets", file.gsub(%r{(\.#{self.class::EXTENSION})(.*)$}, '\1'))
+    File.join(Dir.pwd, ".tmp/sprockets", file.gsub(%r{(\.#{extension})(.*)$}, '\1'))
+  end
+
+  def evaluate(scope, locals, &block)
+    handle_evaluate
+  end
+
+  def extension
+    self.class::EXTENSION
   end
 end
 

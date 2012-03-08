@@ -6,9 +6,5 @@ class Flowerbox::Delivery::Tilt::CSSTemplate < Tilt::Template
   EXTENSION = "css"
 
   include Flowerbox::Delivery::Tilt::TemplateThatSaves
-
-  def evaluate(scope, locals, &block)
-    handle_evaluate
-  end
 end
 
