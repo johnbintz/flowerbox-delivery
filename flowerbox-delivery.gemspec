@@ -28,4 +28,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'rack'
   gem.add_runtime_dependency 'sprockets'
   gem.add_runtime_dependency 'coffee-script'
+  gem.add_runtime_dependency 'sprockets-vendor_gems'
 end

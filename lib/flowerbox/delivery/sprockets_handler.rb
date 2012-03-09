@@ -1,6 +1,7 @@
 require 'sprockets'
 require 'sprockets/engines'
 require 'forwardable'
+require 'sprockets-vendor_gems'
 
 module Flowerbox::Delivery
   class SprocketsHandler
@@ -8,7 +9,7 @@ module Flowerbox::Delivery
 
     attr_reader :files, :options
 
-    def_delegators :environment, :append_path
+    def_delegators :environment, :append_path, :register_engine
 
     def initialize(options)
       @options = options
@@ -27,7 +28,7 @@ module Flowerbox::Delivery
     def environment
       return @environment if @environment
 
-      @environment = Sprockets::Environment.new
+      @environment = Sprockets::EnvironmentWithVendoredGems.new
       @environment.unregister_postprocessor('application/javascript', Sprockets::SafetyColons)
       @environment.register_postprocessor('application/javascript', Flowerbox::Delivery::Tilt::EnsureSavedFile)
       @environment.unregister_bundle_processor('text/css', Sprockets::CharsetNormalizer)
