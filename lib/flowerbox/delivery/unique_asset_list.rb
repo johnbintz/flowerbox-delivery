@@ -5,12 +5,12 @@ module Flowerbox::Delivery
     end
 
     def to_json
-      collect(&:logical_path)
+      collect { |asset| asset.pathname.to_s }
     end
 
     private
     def include?(file)
-      any? { |other_file| other_file == file }
+      any? { |other_file| other_file.pathname.to_s == file.pathname.to_s }
     end
   end
 end

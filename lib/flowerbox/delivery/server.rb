@@ -2,6 +2,7 @@ require 'rack'
 require 'net/http'
 require 'socket'
 require 'rack/builder'
+require 'thin'
 
 module Flowerbox
   module Delivery
@@ -17,6 +18,8 @@ module Flowerbox
           server_options = { :Port => port, :Host => interface }
 
           app = options[:app]
+
+          Thin::Logging.silent = !options[:logging]
 
           if options[:logging]
             real_app = app

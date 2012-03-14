@@ -11,6 +11,10 @@ module Flowerbox::Delivery
 
     def_delegators :environment, :append_path, :register_engine, :[]
 
+    def self.gem_asset_paths
+      @gem_asset_paths ||= Sprockets.find_gem_vendor_paths
+    end
+
     def initialize(options)
       @options = options
 
@@ -32,14 +36,10 @@ module Flowerbox::Delivery
     def environment
       return @environment if @environment
 
-      @environment = Sprockets::EnvironmentWithVendoredGems.new
-      @environment.unregister_postprocessor('application/javascript', Sprockets::SafetyColons)
-      #@environment.register_postprocessor('application/javascript', Flowerbox::Delivery::Tilt::EnsureSavedFile)
-      @environment.unregister_bundle_processor('text/css', Sprockets::CharsetNormalizer)
-      #@environment.register_engine('.js', Flowerbox::Delivery::Tilt::JSTemplate)
-      #@environment.register_engine('.css', Flowerbox::Delivery::Tilt::CSSTemplate)
-      #@environment.register_engine('.jst', Flowerbox::Delivery::Tilt::JSTTemplate)
+      @environment = Sprockets::Environment.new
+      @environment.cache = Sprockets::Cache::FileStore.new(".tmp")
 
+      self.class.gem_asset_paths.each { |path| append_path(path) }
       options[:asset_paths].each { |path| append_path(path) }
 
       @environment
