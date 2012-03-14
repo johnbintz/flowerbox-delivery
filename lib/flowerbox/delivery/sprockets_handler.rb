@@ -9,7 +9,7 @@ module Flowerbox::Delivery
 
     attr_reader :files, :options
 
-    def_delegators :environment, :append_path, :register_engine
+    def_delegators :environment, :append_path, :register_engine, :[]
 
     def initialize(options)
       @options = options
@@ -25,16 +25,20 @@ module Flowerbox::Delivery
       environment.find_asset(asset).to_a.collect(&:pathname)
     end
 
+    def expire_index!
+      @environment.send(:expire_index!)
+    end
+
     def environment
       return @environment if @environment
 
       @environment = Sprockets::EnvironmentWithVendoredGems.new
       @environment.unregister_postprocessor('application/javascript', Sprockets::SafetyColons)
-      @environment.register_postprocessor('application/javascript', Flowerbox::Delivery::Tilt::EnsureSavedFile)
+      #@environment.register_postprocessor('application/javascript', Flowerbox::Delivery::Tilt::EnsureSavedFile)
       @environment.unregister_bundle_processor('text/css', Sprockets::CharsetNormalizer)
-      @environment.register_engine('.js', Flowerbox::Delivery::Tilt::JSTemplate)
-      @environment.register_engine('.css', Flowerbox::Delivery::Tilt::CSSTemplate)
-      @environment.register_engine('.jst', Flowerbox::Delivery::Tilt::JSTTemplate)
+      #@environment.register_engine('.js', Flowerbox::Delivery::Tilt::JSTemplate)
+      #@environment.register_engine('.css', Flowerbox::Delivery::Tilt::CSSTemplate)
+      #@environment.register_engine('.jst', Flowerbox::Delivery::Tilt::JSTTemplate)
 
       options[:asset_paths].each { |path| append_path(path) }
 

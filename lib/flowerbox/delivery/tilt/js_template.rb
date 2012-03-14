@@ -6,5 +6,9 @@ class Flowerbox::Delivery::Tilt::JSTemplate < Tilt::Template
   EXTENSION = "js"
 
   include Flowerbox::Delivery::Tilt::TemplateThatSaves
+
+  def evaluate(scope, locals, &block)
+    handle_evaluate
+  end
 end
 

@@ -5,7 +5,7 @@ module Flowerbox::Delivery
     end
 
     def to_json
-      collect(&:body)
+      collect(&:logical_path)
     end
 
     private

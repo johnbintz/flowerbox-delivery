@@ -6,9 +6,15 @@ class Flowerbox::Delivery::Tilt::JSTTemplate < Sprockets::JstProcessor
   include Flowerbox::Delivery::Tilt::TemplateThatSaves
 
   def evaluate(scope, locals, &block)
-    super
+    @data = super
+
+    p @data
 
     handle_evaluate
+  end
+
+  def data_to_save
+    @data || data
   end
 end
 

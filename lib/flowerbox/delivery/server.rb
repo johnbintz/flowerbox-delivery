@@ -1,6 +1,7 @@
 require 'rack'
 require 'net/http'
 require 'socket'
+require 'rack/builder'
 
 module Flowerbox
   module Delivery
@@ -14,12 +15,18 @@ module Flowerbox
       def start
         @server_thread = Thread.new do
           server_options = { :Port => port, :Host => interface }
-          if !options[:logging]
-            server_options[:AccessLog] = [ nil, nil ]
-            server_options[:Logger] = Logger.new('/dev/null')
+
+          app = options[:app]
+
+          if options[:logging]
+            real_app = app
+            app = ::Rack::Builder.new do
+              use ::Rack::CommonLogger, STDOUT
+              run real_app
+            end
           end
 
-          ::Rack::Handler::WEBrick.run(options[:app], server_options) do |server|
+          ::Rack::Handler::Thin.run(app, server_options) do |server|
             trap('QUIT') { server.stop }
 
             Thread.current[:server] = server
@@ -35,7 +42,7 @@ module Flowerbox
 
       def stop
         if @server_thread
-          @server_thread[:server].shutdown
+          @server_thread[:server].stop
 
           wait_for_server_to_stop
         end
@@ -68,6 +75,14 @@ module Flowerbox
         @port
       end
 
+      def address
+        "http://#{interface}:#{port}/"
+      end
+
+      def alive?
+        @server_thread.alive?
+      end
+
       private
       def wait_for_server_to_start
         while true do
@@ -84,7 +99,7 @@ module Flowerbox
       end
 
       def wait_for_server_to_stop
-        while true do
+        while alive? do
           begin
             connect_interface = '127.0.0.1' if interface == '0.0.0.0'
 
