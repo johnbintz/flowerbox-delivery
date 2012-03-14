@@ -5,7 +5,7 @@ module Flowerbox::Delivery
     end
 
     def to_json
-      collect { |asset| asset.pathname.to_s }
+      collect(&:logical_path)
     end
 
     private
