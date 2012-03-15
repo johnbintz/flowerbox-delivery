@@ -30,9 +30,9 @@ module Flowerbox
           end
 
           ::Rack::Handler::Thin.run(app, server_options) do |server|
-            trap('QUIT') { server.stop }
-
             Thread.current[:server] = server
+
+            trap('QUIT') { server.stop }
           end
         end
 
@@ -40,7 +40,7 @@ module Flowerbox
           sleep 0.1
         end
 
-        raise StandardError.new("Server died") if !@server_thread.alive?
+        raise StandardError.new("Server died") if !@server_thread[:server].running?
       end
 
       def stop
